@@ -1,57 +1,49 @@
 import translator as tr
-import dictionary as d        # mi serve?
 
 t = tr.Translator()
-dizionario = d.Dictionary()    # mi serve?
+t.loadDictionary("dictionary.txt")
 
 while(True):
 
     t.printMenu()
     print("Scegli cosa vuoi fare: ")
-    t.loadDictionary("filename.txt")
 
     txtIn = input()
-    numeroIntero = int(txtIn)
 
     # Add input control here!
-    while numeroIntero < 1 or numeroIntero > 5:
+    while not txtIn.isdigit() or int(txtIn) < 1 or int(txtIn) > 5 :
         print("Hai inserito un valore che non corrisponde a nessuna scelta!")
         print("Inserisci nuovamente la tua scelta: ")
-        numeroIntero = int(input())
+        txtIn = input()
 
     if int(txtIn) == 1:
         print()
-        print("Scrivi <parola aliena> <traduzione>: ")
-        da_inserire = input().strip()
-        campi = da_inserire.split()
-        for campo in campi:
-            campo.lower()
-            while not campo.isalpha():     # attenzione che forse isalpha non va bene perchè conumque può contenere un punto interrogativo
-                                           # può contenere UN SOLO punto interrogativo, puoi usare un contatore contando i '?', se è >1 segnala un problema
-                print("Hai inserito caratteri nella parola aliena che non sono lettere!")
-                print("Scrivi <parola aliena> <traduzione>: ")
-                da_inserire = input().strip()
-                campi = da_inserire.split()
-                break
-        if(len(campi) != 2):
-            print("Hai inserito il formato sbagliato!")
-            break
-        dizionario.addWord(dizionario,campi[0], campi[1])     # da correggere
+        print("Scrivi <parola aliena> <traduzione1 traduzione2 ...>: ")
+        campi = input().strip()
+        while len(campi.split()) < 2:
+            campi = input("Hai inserito un formato sbagliato. Devi inserire almeno una parola aliena con la sua traduzione: ").strip()
+        t.handleAdd(campi)
+        print("Parola aggiunta correttamente!")
 
     if int(txtIn) == 2:
         print("Inserisci la parola aliena che vuoi tradurre: ")
         aliena = input().strip()
-        while(aliena.lower().isalpha() == False):
+        while not aliena.replace("?", "").isalpha():
             print("Hai inserito una parola non valida, inseriscine una che contenga solo lettere: ")
             aliena = input().strip()
-        dizionario.translate(dizionario, aliena)
+        t.handleTranslate(aliena)
 
     if int(txtIn) == 3:
-        pass
+        print("Inserisci una parola aliena che contenga '?': ")
+        aliena = input().strip()
+        while aliena.count("?") > 1 or not aliena.replace("?", "").isalpha():
+            print("Puoi inserire al max un '?' e solo lettere. Riprova: ")
+            aliena = input().strip()
+        t.handleWildCard(aliena)
 
     if int(txtIn) == 4:
-        dizionario.printDictionary()  # dovrai usare la funzione loadDictionary
-        break
+        print("Dizionario completo: ")
+        t.dizionario.printDictionary()
 
     if int(txtIn) == 5:
         print("Hai deciso di uscire!")

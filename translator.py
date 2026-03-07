@@ -2,7 +2,7 @@ import dictionary as d
 class Translator:
 
     def __init__(self):
-        pass
+        self.dizionario = d.Dictionary()
 
     def printMenu(self):
         # 1. Aggiungi nuova parola
@@ -21,25 +21,32 @@ class Translator:
 
     def loadDictionary(self, dict):
         # dict is a string with the filename of the dictionary
-        # dovrei caricare il dizionario dal file dictionary
-        pass
+        try:
+            with open(dict, "r") as file:
+                for riga in file:
+                    campi = riga.strip().split()
+                    if len(campi) >= 2:
+                        aliena = campi[0]
+                    for traduzione in campi[1:]:
+                        self.dizionario.addWord(aliena, traduzione)
+        except FileNotFoundError:
+            print("File non trovato!")
+
 
     def handleAdd(self, entry):
         # entry is a tuple <parola_aliena> <traduzione1 traduzione2 ...>
         campi = entry.strip().split()
         lunghezza = len(campi)
+        aliena = campi[0]
         for i in range(1, lunghezza):
-            dizionario[campi[0]] = campi[i]     # devo mettere loadDisctionary in modo da poterlo vedere
-        pass
+            self.dizionario.addWord(aliena, campi[i])
 
-    # dovrai prima svilppare il metodo qui sopra e il metodo addWord() in dictionary.py
-    # poi in base alla lunghezza della stringa che l'utente ha inserito decidi se fare uno o l'altro,
-    # però se l'utente riscrive una parola aliena già esistente devi solamente aggiungere la traduzione alla lista che si trova nel valore del dizionario
-    # in realtà questo dovresti già averlo implemetato nella funzione addWord(), controlla però se lo hai fatto correttamente
-    def handleTranslate(self, query):           # questo dovrebbe darti le varie traduzioni
+
+    def handleTranslate(self, query):
         # query is a string <parola_aliena>
-        pass
+        self.dizionario.translate(query)
+
 
     def handleWildCard(self,query):
-        # query is a string with a ? --> <par?la_aliena>            # penso che puoi mettere qui il contatore di '?' e segnalare problemi se cnt>1
-        pass
+        # query is a string with a ? --> <par?la_aliena>
+        self.dizionario.translateWordWildCard(query)
